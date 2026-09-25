@@ -1,0 +1,1046 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>AI Smart Expense Tracker</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f3f4f6;
+            color: #111827;
+        }
+
+        /* ================= HEADER ================= */
+
+        .header {
+            background: linear-gradient(135deg, #111827, #1f2937);
+            color: white;
+            padding: 42px 20px;
+            text-align: center;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 32px;
+        }
+
+        .header p {
+            margin: 10px 0 0;
+            color: #d1d5db;
+            font-size: 15px;
+        }
+
+        /* ================= CONTAINER ================= */
+
+        .container {
+            width: 92%;
+            max-width: 1150px;
+            margin: 28px auto;
+        }
+
+        /* ================= CARD ================= */
+
+        .card {
+            background: white;
+            padding: 25px;
+            margin-bottom: 22px;
+            border-radius: 16px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.07);
+        }
+
+        .card h2 {
+            margin-top: 0;
+            margin-bottom: 20px;
+            color: #1f2937;
+            font-size: 21px;
+        }
+
+        /* ================= SUMMARY ================= */
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+        }
+
+        .summary-card {
+            padding: 22px;
+            border-radius: 14px;
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            transition: 0.2s;
+        }
+
+        .summary-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        .stat-label {
+            color: #6b7280;
+            font-size: 14px;
+            margin-bottom: 9px;
+        }
+
+        .stat-value {
+            font-size: 25px;
+            font-weight: bold;
+            color: #111827;
+        }
+
+        /* ================= STATISTICS ================= */
+
+        .mini-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+
+        .mini-stat {
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            padding: 20px;
+            border-radius: 12px;
+        }
+
+        .mini-stat strong {
+            color: #374151;
+        }
+
+        .mini-stat span {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2563eb;
+        }
+
+        /* ================= FORMS ================= */
+
+        label {
+            display: inline-block;
+            font-weight: 600;
+            color: #374151;
+            margin-top: 5px;
+        }
+
+        input {
+            width: 100%;
+            max-width: 600px;
+            padding: 12px 14px;
+            margin: 8px 0 15px;
+            border: 1px solid #d1d5db;
+            border-radius: 9px;
+            font-size: 15px;
+            background: white;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        /* ================= BUTTONS ================= */
+
+        button {
+            border: none;
+            border-radius: 9px;
+            padding: 11px 18px;
+            color: white;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: 0.2s;
+            margin-right: 6px;
+            margin-top: 4px;
+        }
+
+        button:hover {
+            transform: translateY(-1px);
+        }
+
+        .primary-button {
+            background: #2563eb;
+        }
+
+        .primary-button:hover {
+            background: #1d4ed8;
+        }
+
+        .success-button {
+            background: #16a34a;
+        }
+
+        .success-button:hover {
+            background: #15803d;
+        }
+
+        .danger-button {
+            background: #dc2626;
+        }
+
+        .danger-button:hover {
+            background: #b91c1c;
+        }
+
+        .edit-button {
+            background: #7c3aed;
+        }
+
+        .edit-button:hover {
+            background: #6d28d9;
+        }
+
+        /* ================= AI INSIGHT ================= */
+
+        .insight-box {
+            background: #eff6ff;
+            border-left: 5px solid #2563eb;
+            padding: 18px;
+            border-radius: 10px;
+            line-height: 1.6;
+            color: #1e3a8a;
+        }
+
+        .insight-box p {
+            margin: 0;
+        }
+
+        /* ================= BUDGET ================= */
+
+        .budget-box {
+            padding: 18px;
+            border-radius: 10px;
+        }
+
+        .budget-success {
+            background: #ecfdf5;
+            border-left: 5px solid #16a34a;
+            color: #166534;
+        }
+
+        .budget-warning {
+            background: #fff7ed;
+            border-left: 5px solid #f59e0b;
+            color: #9a3412;
+        }
+
+        .budget-danger {
+            background: #fef2f2;
+            border-left: 5px solid #dc2626;
+            color: #991b1b;
+        }
+
+        /* ================= EXPENSE LIST ================= */
+
+        .expense {
+            padding: 18px 0;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .expense:last-child {
+            border-bottom: none;
+        }
+
+        .expense-name {
+            font-size: 17px;
+            color: #111827;
+        }
+
+        .expense-info {
+            color: #374151;
+            font-weight: 600;
+        }
+
+        .expense-date {
+            color: #6b7280;
+            font-size: 14px;
+            margin-top: 7px;
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: #eef2ff;
+            color: #3730a3;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-left: 5px;
+        }
+
+        .expense-actions {
+            margin-top: 12px;
+        }
+
+        /* ================= EDIT FORM ================= */
+
+        .edit-form {
+            display: none;
+            background: #f9fafb;
+            padding: 18px;
+            border-radius: 12px;
+            margin-top: 14px;
+            border: 1px solid #e5e7eb;
+        }
+
+        .edit-form.active {
+            display: block;
+        }
+
+        /* ================= CHART ================= */
+
+        .chart-container {
+            max-width: 520px;
+            margin: auto;
+        }
+
+        /* ================= EMPTY ================= */
+
+        .empty-message {
+            text-align: center;
+            color: #6b7280;
+            padding: 20px;
+        }
+
+        /* ================= FOOTER ================= */
+
+        .footer {
+            text-align: center;
+            color: #6b7280;
+            font-size: 13px;
+            padding: 10px 0 30px;
+        }
+
+        /* ================= MOBILE ================= */
+
+        @media (max-width: 850px) {
+
+            .summary-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+        }
+
+        @media (max-width: 550px) {
+
+            .container {
+                width: 94%;
+            }
+
+            .header {
+                padding: 32px 15px;
+            }
+
+            .header h1 {
+                font-size: 25px;
+            }
+
+            .summary-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .mini-stats {
+                grid-template-columns: 1fr;
+            }
+
+            .card {
+                padding: 19px;
+            }
+
+            button {
+                margin-bottom: 5px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <!-- ================= HEADER ================= -->
+
+    <div class="header">
+
+        <h1>💰 AI Smart Expense Tracker</h1>
+
+        <p>
+            AI Powered Personal Expense Management
+        </p>
+
+    </div>
+
+
+    <div class="container">
+
+
+        <!-- ================= DASHBOARD ================= -->
+
+        <div class="card">
+
+            <h2>📊 Dashboard Overview</h2>
+
+            <div class="summary-grid">
+
+
+                <div class="summary-card">
+
+                    <div class="stat-label">
+                        Total Expense
+                    </div>
+
+                    <div class="stat-value">
+                        ₹{{ total }}
+                    </div>
+
+                </div>
+
+
+                <div class="summary-card">
+
+                    <div class="stat-label">
+                        Monthly Budget
+                    </div>
+
+                    <div class="stat-value">
+                        ₹{{ budget }}
+                    </div>
+
+                </div>
+
+
+                <div class="summary-card">
+
+                    <div class="stat-label">
+                        Remaining
+                    </div>
+
+                    <div class="stat-value">
+                        ₹{{ remaining }}
+                    </div>
+
+                </div>
+
+
+                <div class="summary-card">
+
+                    <div class="stat-label">
+                        Average Expense
+                    </div>
+
+                    <div class="stat-value">
+                        ₹{{ average_expense }}
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ================= STATISTICS ================= -->
+
+        <div class="card">
+
+            <h2>📈 Expense Statistics</h2>
+
+            <div class="mini-stats">
+
+
+                <div class="mini-stat">
+
+                    <strong>
+                        Number of Expenses
+                    </strong>
+
+                    <br><br>
+
+                    <span>
+                        {{ expense_count }}
+                    </span>
+
+                </div>
+
+
+                <div class="mini-stat">
+
+                    <strong>
+                        Highest Single Expense
+                    </strong>
+
+                    <br><br>
+
+                    <span>
+                        ₹{{ highest_expense }}
+                    </span>
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+
+        <!-- ================= ADD EXPENSE ================= -->
+
+        <div class="card">
+
+            <h2>➕ Add New Expense</h2>
+
+            <form action="/add" method="POST">
+
+
+                <label>
+                    Expense Description
+                </label>
+
+                <br>
+
+                <input
+                    type="text"
+                    name="description"
+                    placeholder="Example: Pizza"
+                    required
+                >
+
+                <br>
+
+
+                <label>
+                    Amount
+                </label>
+
+                <br>
+
+                <input
+                    type="number"
+                    name="amount"
+                    placeholder="250"
+                    min="1"
+                    step="0.01"
+                    required
+                >
+
+                <br>
+
+
+                <label>
+                    Expense Date
+                </label>
+
+                <br>
+
+                <input
+                    type="date"
+                    name="expense_date"
+                    required
+                >
+
+                <br>
+
+
+                <button
+                    type="submit"
+                    class="primary-button"
+                >
+                    ➕ Add Expense
+                </button>
+
+
+            </form>
+
+        </div>
+
+
+        <!-- ================= AI INSIGHT ================= -->
+
+        <div class="card">
+
+            <h2>🤖 AI Spending Insight</h2>
+
+            <div class="insight-box">
+
+                <p>
+                    {{ insight }}
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- ================= BUDGET STATUS ================= -->
+
+        <div class="card">
+
+            <h2>⚠️ Budget Status</h2>
+
+            <div class="budget-box budget-{{ alert_type }}">
+
+                <strong>
+                    {{ alert }}
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <!-- ================= UPDATE BUDGET ================= -->
+
+        <div class="card">
+
+            <h2>💵 Set Monthly Budget</h2>
+
+            <form action="/budget" method="POST">
+
+                <input
+                    type="number"
+                    name="budget"
+                    value="{{ budget }}"
+                    min="0"
+                    step="0.01"
+                    required
+                >
+
+                <br>
+
+                <button
+                    type="submit"
+                    class="primary-button"
+                >
+                    💾 Update Budget
+                </button>
+
+            </form>
+
+        </div>
+
+
+        <!-- ================= EXPENSE LIST ================= -->
+
+        <div class="card">
+
+            <h2>📋 My Expenses</h2>
+
+
+            {% if expenses %}
+
+
+                {% for expense in expenses %}
+
+
+                    <div class="expense">
+
+
+                        <strong class="expense-name">
+                            {{ expense["description"] }}
+                        </strong>
+
+
+                        <span class="expense-info">
+                            — ₹{{ expense["amount"] }}
+                        </span>
+
+
+                        <span class="category-badge">
+                            {{ expense["category"] }}
+                        </span>
+
+
+                        <div class="expense-date">
+
+                            📅 {{ expense["expense_date"] }}
+
+                        </div>
+
+
+                        <div class="expense-actions">
+
+
+                            <!-- EDIT -->
+
+                            <button
+                                type="button"
+                                class="edit-button"
+                                onclick="toggleEdit({{ expense['id'] }})"
+                            >
+                                ✏️ Edit
+                            </button>
+
+
+                            <!-- DELETE -->
+
+                            <form
+                                action="/delete/{{ expense['id'] }}"
+                                method="POST"
+                                style="display:inline;"
+                                onsubmit="return confirm('Delete this expense?');"
+                            >
+
+                                <button
+                                    type="submit"
+                                    class="danger-button"
+                                >
+                                    🗑️ Delete
+                                </button>
+
+                            </form>
+
+
+                        </div>
+
+
+                        <!-- EDIT FORM -->
+
+                        <div
+                            id="edit-{{ expense['id'] }}"
+                            class="edit-form"
+                        >
+
+                            <form
+                                action="/edit/{{ expense['id'] }}"
+                                method="POST"
+                            >
+
+
+                                <label>
+                                    Description
+                                </label>
+
+                                <br>
+
+                                <input
+                                    type="text"
+                                    name="description"
+                                    value="{{ expense['description'] }}"
+                                    required
+                                >
+
+                                <br>
+
+
+                                <label>
+                                    Amount
+                                </label>
+
+                                <br>
+
+                                <input
+                                    type="number"
+                                    name="amount"
+                                    value="{{ expense['amount'] }}"
+                                    min="1"
+                                    step="0.01"
+                                    required
+                                >
+
+                                <br>
+
+
+                                <label>
+                                    Date
+                                </label>
+
+                                <br>
+
+                                <input
+                                    type="date"
+                                    name="expense_date"
+                                    value="{{ expense['expense_date'] }}"
+                                    required
+                                >
+
+                                <br>
+
+
+                                <button
+                                    type="submit"
+                                    class="success-button"
+                                >
+                                    💾 Save Changes
+                                </button>
+
+
+                            </form>
+
+                        </div>
+
+
+                    </div>
+
+
+                {% endfor %}
+
+
+            {% else %}
+
+                <div class="empty-message">
+
+                    <p>
+                        No expenses added yet.
+                    </p>
+
+                    <p>
+                        Add your first expense above.
+                    </p>
+
+                </div>
+
+            {% endif %}
+
+
+        </div>
+
+
+        <!-- ================= MONTH FILTER ================= -->
+
+        <div class="card">
+
+            <h2>🗓️ Monthly Filter</h2>
+
+            <form action="/" method="GET">
+
+
+                <input
+                    type="month"
+                    name="month"
+                    value="{{ selected_month or '' }}"
+                >
+
+                <br>
+
+
+                <button
+                    type="submit"
+                    class="primary-button"
+                >
+                    🔍 View Month
+                </button>
+
+
+                <button
+                    type="button"
+                    class="success-button"
+                    onclick="window.location.href='/'"
+                >
+                    📋 Show All
+                </button>
+
+
+            </form>
+
+        </div>
+
+
+        <!-- ================= CHART ================= -->
+
+        <div class="card">
+
+            <h2>📊 Expense Analysis</h2>
+
+
+            {% if category_totals %}
+
+                <div class="chart-container">
+
+                    <canvas id="expenseChart"></canvas>
+
+                </div>
+
+            {% else %}
+
+                <div class="empty-message">
+
+                    Add expenses to view the spending chart.
+
+                </div>
+
+            {% endif %}
+
+
+        </div>
+
+
+        <!-- ================= EXPORT ================= -->
+
+        <div class="card">
+
+            <h2>📥 Export Data</h2>
+
+            <p>
+                Download your expenses as a CSV file.
+            </p>
+
+
+            <button
+                type="button"
+                class="success-button"
+                onclick="window.location.href='/export'"
+            >
+                📥 Export CSV
+            </button>
+
+
+        </div>
+
+
+        <!-- ================= RESET ================= -->
+
+        <div class="card">
+
+            <h2>🗑️ Reset Expenses</h2>
+
+            <p>
+                This will permanently delete all saved expenses.
+            </p>
+
+
+            <form
+                action="/reset"
+                method="POST"
+                onsubmit="return confirm('Delete all expenses?');"
+            >
+
+                <button
+                    type="submit"
+                    class="danger-button"
+                >
+                    🗑️ Reset All Expenses
+                </button>
+
+            </form>
+
+
+        </div>
+
+
+        <!-- ================= FOOTER ================= -->
+
+        <div class="footer">
+
+            AI Smart Expense Tracker • Mini Project
+
+        </div>
+
+
+    </div>
+
+
+    <!-- ================= CHART.JS ================= -->
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
+    <script>
+
+        const categoryData =
+            {{ category_totals | tojson }};
+
+
+        const labels =
+            Object.keys(categoryData);
+
+
+        const values =
+            Object.values(categoryData);
+
+
+        const chartElement =
+            document.getElementById("expenseChart");
+
+
+        if (
+            chartElement &&
+            labels.length > 0
+        ) {
+
+            new Chart(
+                chartElement,
+                {
+                    type: "doughnut",
+
+                    data: {
+
+                        labels: labels,
+
+                        datasets: [
+                            {
+                                label: "Expenses",
+
+                                data: values
+                            }
+                        ]
+
+                    },
+
+                    options: {
+
+                        responsive: true,
+
+                        plugins: {
+
+                            legend: {
+                                position: "bottom"
+                            }
+
+                        }
+
+                    }
+
+                }
+            );
+
+        }
+
+
+        /* ================= EDIT TOGGLE ================= */
+
+        function toggleEdit(id) {
+
+            const form =
+                document.getElementById(
+                    "edit-" + id
+                );
+
+
+            if (!form) {
+                return;
+            }
+
+
+            if (
+                form.classList.contains("active")
+            ) {
+
+                form.classList.remove("active");
+
+            } else {
+
+                form.classList.add("active");
+
+            }
+
+        }
+
+    </script>
+
+
+</body>
+
+</html>
